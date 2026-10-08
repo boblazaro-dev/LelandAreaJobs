@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wilmington Area Jobs</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:0;background:#f5f7f9;color:#1d2730}
+header{background:#17324d;color:white;padding:28px 5%}
+header h1{margin:0 0 6px;font-size:32px}
+header p{margin:0;opacity:.9}
+main{max-width:1200px;margin:24px auto;padding:0 18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat,.panel,.job{background:white;border-radius:10px;padding:18px;box-shadow:0 1px 4px #0001}
+.stat strong{font-size:28px;display:block}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+input,select{padding:10px;border:1px solid #ccd4dc;border-radius:7px;background:white}
+.jobs{display:grid;gap:12px}
+.job h3{margin:0 0 6px}
+.meta{color:#586674;font-size:14px}
+.salary{font-weight:700;margin:9px 0}
+.badge{display:inline-block;padding:3px 7px;border-radius:10px;background:#e8f1f8;font-size:12px;margin-right:5px}
+a{color:#145b8c;text-decoration:none}
+a:hover{text-decoration:underline}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Wilmington Area Jobs</h1>
+  <p>Brunswick • New Hanover • Pender counties</p>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat"><strong id="total">—</strong><span>Active listings</span></div>
+    <div class="stat"><strong id="new">—</strong><span>New listings</span></div>
+    <div class="stat"><strong id="employers">—</strong><span>Employers</span></div>
+    <div class="stat"><strong id="updated">—</strong><span>Last updated</span></div>
+  </div>
+
+  <div class="controls">
+    <input id="search" placeholder="Search jobs or employers">
+    <select id="county"><option value="">All counties</option><option>New Hanover</option><option>Brunswick</option><option>Pender</option></select>
+    <select id="type"><option value="">All employment types</option><option>FULL_TIME</option><option>PART_TIME</option><option>CONTRACTOR</option><option>TEMPORARY</option></select>
+    <select id="sort"><option value="new">Newest first</option><option value="employer">Employer</option><option value="title">Job title</option></select>
+  </div>
+
+  <div id="jobs" class="jobs"></div>
+</main>
+
+<script>
+let jobs=[];
+const $=id=>document.getElementById(id);
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function render(){
+  const q=$('search').value.toLowerCase();
+  const county=$('county').value;
+  const type=$('type').value;
+  const sort=$('sort').value;
+
+  let filtered=jobs.filter(j=>{
+    const text=(j.title+' '+j.employer+' '+j.location+' '+j.description).toLowerCase();
+    return (!q||text.includes(q)) && (!county||j.county===county) && (!type||j.employment_type===type);
+  });
+
+  filtered.sort((a,b)=>{
+    if(sort==='employer') return a.employer.localeCompare(b.employer);
+    if(sort==='title') return a.title.localeCompare(b.title);
+    return (b.date_posted||b.first_seen||'').localeCompare(a.date_posted||a.first_seen||'');
+  });
+
+  $('jobs').innerHTML=filtered.slice(0,200).map(j=>`
+    <article class="job">
+      <h3><a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a></h3>
+      <div class="meta">${esc(j.employer)} • ${esc(j.location||j.county)}</div>
+      ${j.salary?`<div class="salary">${esc(j.salary)}</div>`:''}
+      <div>
+        ${j.county?`<span class="badge">${esc(j.county)}</span>`:''}
+        ${j.employment_type?`<span class="badge">${esc(j.employment_type)}</span>`:''}
+        ${j.is_new?'<span class="badge">New</span>':''}
+      </div>
+      <p>${esc((j.description||'').slice(0,260))}${j.description&&j.description.length>260?'…':''}</p>
+      <div class="meta">Source: ${esc(j.source)}${j.date_posted?' • Posted '+esc(j.date_posted):''}</div>
+    </article>`).join('') || '<div class="panel">No matching jobs.</div>';
+}
+
+fetch('../data/jobs.json')
+.then(r=>r.json())
+.then(data=>{
+  jobs=data.jobs||[];
+  $('total').textContent=jobs.length.toLocaleString();
+  $('new').textContent=jobs.filter(j=>j.is_new).length.toLocaleString();
+  $('employers').textContent=new Set(jobs.map(j=>j.employer).filter(Boolean)).size.toLocaleString();
+  $('updated').textContent=new Date(data.generated_at).toLocaleDateString();
+  render();
+})
+.catch(e=>{$('jobs').innerHTML='<div class="panel">Job data could not be loaded.</div>';});
+
+['search','county','type','sort'].forEach(id=>$(id).addEventListener('input',render));
+</script>
+</body>
+</html>

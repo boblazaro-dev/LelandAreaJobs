@@ -1,0 +1,14 @@
+{
+  "generated_at": null,
+  "region": "Wilmington, NC",
+  "counties": [
+    "Brunswick",
+    "New Hanover",
+    "Pender"
+  ],
+  "sources_excluded": [
+    "Indeed",
+    "LinkedIn"
+  ],
+  "jobs": []
+}

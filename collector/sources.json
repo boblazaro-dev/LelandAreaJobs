@@ -1,0 +1,58 @@
+[
+  {
+    "name": "NCWorks",
+    "county": "Regional",
+    "url": "https://jetzero.ncworks.gov/vosnet/JobBanks/JobSearchCriteriaQuick.aspx?qlink=1",
+    "type": "html",
+    "adapter": "ncworks"
+  },
+  {
+    "name": "City of Wilmington",
+    "county": "New Hanover",
+    "url": "https://www.wilmingtonnc.gov/Connect-With-Us/Department-Directory/Human-Resources",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "New Hanover County",
+    "county": "New Hanover",
+    "url": "https://www.governmentjobs.com/careers/nhc",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "Brunswick County",
+    "county": "Brunswick",
+    "url": "https://www.brunswickcountync.gov/Jobs.aspx",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "New Hanover County Schools",
+    "county": "New Hanover",
+    "url": "https://www.nhcs.net/careers",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "Brunswick County Schools",
+    "county": "Brunswick",
+    "url": "https://www.bcswan.net/careers",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "UNC Wilmington",
+    "county": "New Hanover",
+    "url": "https://uncw.edu/myuncw/employment/",
+    "type": "html",
+    "adapter": "generic"
+  },
+  {
+    "name": "Cape Fear Community College",
+    "county": "New Hanover",
+    "url": "https://cfcc.edu/human-resources/employment/",
+    "type": "html",
+    "adapter": "generic"
+  }
+]
